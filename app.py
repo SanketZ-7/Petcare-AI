@@ -6,17 +6,17 @@ from fastapi.responses import FileResponse
 from pydantic import BaseModel
 from src.agent.graph import app as graph_app
 
-# Initialize FastAPI app
+
 app = FastAPI(title="PetCare AI Assistant")
 
-# Mount static files
+
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
-# Request Model
+
 class ChatRequest(BaseModel):
     question: str
 
-# Routes
+
 @app.get("/")
 async def read_root():
     return FileResponse("static/index.html")
@@ -43,6 +43,5 @@ async def chat_endpoint(request: ChatRequest):
         print(f"Error processing request: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
-# if __name__ == "__main__":
-#     uvicorn.run("app:app", host="127.0.0.1", port=8000, reload=True)
+
 

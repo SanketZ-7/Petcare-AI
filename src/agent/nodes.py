@@ -1,4 +1,4 @@
-# src/agent/nodes.py
+
 
 
 from langchain_community.vectorstores import FAISS
@@ -10,7 +10,7 @@ from langchain_core.documents import Document
 
 from src.core import config
 
-# --- Simple Logger Replacement ---
+
 class SimpleLogger:
     def info(self, msg, **kwargs):
         print(f"[INFO] {msg} | {kwargs}")
@@ -23,7 +23,7 @@ class SimpleLogger:
 
 logger = SimpleLogger()
 
-# --- Initialize LangChain Components ---
+
 embeddings = MistralAIEmbeddings(
     model=config.EMBEDDING_MODEL,
     mistral_api_key=config.MISTRAL_API_KEY
@@ -35,7 +35,7 @@ llm = ChatMistralAI(
 )
 grading_llm = llm  # Use the same LLM for grading
 
-# --- Initialize Vector Store and Search Tool ---
+
 vectorstore = None
 retriever = None
 index_path = str(config.FAISS_INDEX_PATH)
@@ -57,7 +57,7 @@ except Exception as e:
 web_search_tool = TavilySearchResults(k=config.SEARCH_K)
 
 
-# --- Node Functions ---
+
 
 async def retrieve(state):
     """Retrieve documents from vector store based on the question."""
