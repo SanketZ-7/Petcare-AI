@@ -66,13 +66,7 @@ Key settings in `src/core/config.py`:
 | `LLM_MODEL` | `mistral-small-latest` | Mistral LLM for generation |
 | `LOG_LEVEL` | `INFO` | Logging verbosity |
 
-### Optional: LangSmith Tracing
 
-Add to `.env` to enable:
-```
-LANGCHAIN_TRACING_V2=true
-LANGCHAIN_PROJECT=pet-care-assistant
-```
 
 ## Testing
 

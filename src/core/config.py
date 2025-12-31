@@ -30,6 +30,4 @@ INGEST_CHUNK_OVERLAP = 150
 
 LOG_LEVEL = os.getenv("LOG_LEVEL", "INFO")
 
-# LangSmith Tracing (optional - set in .env to enable)
-LANGCHAIN_TRACING_V2 = os.getenv("LANGCHAIN_TRACING_V2", "false")
-LANGCHAIN_PROJECT = os.getenv("LANGCHAIN_PROJECT", "pet-care-assistant")
+
