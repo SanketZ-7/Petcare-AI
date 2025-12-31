@@ -86,11 +86,6 @@ pytest
 - Mistral API key (for LLM & Embeddings)
 - Tavily API key (for web search)
 
-## Deployment
-
-The project is configured for deployment on **Netlify** using the `mangum` adapter.
-See `NETLIFY_GUIDE.md` for detailed instructions.
-
 ## Notes
 
 - Do not commit your `.env` file or any secrets to version control

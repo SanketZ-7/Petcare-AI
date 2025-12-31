@@ -5,11 +5,9 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
 from pydantic import BaseModel
 from src.agent.graph import app as graph_app
-from mangum import Mangum
 
 # Initialize FastAPI app
 app = FastAPI(title="PetCare AI Assistant")
-handler = Mangum(app) # Netlify entry point
 
 # Mount static files
 app.mount("/static", StaticFiles(directory="static"), name="static")
