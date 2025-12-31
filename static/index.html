@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PetCare Assistant</title>
+    <link rel="stylesheet" href="/static/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+</head>
+<body>
+    <div class="app-container">
+        <header>
+            <div class="logo-icon">
+                <i class="fa-solid fa-paw"></i>
+            </div>
+            <h1>PetCare AI</h1>
+            <div class="status-badge">
+                <div class="status-dot"></div>
+                <span>Online</span>
+            </div>
+        </header>
+
+        <main class="chat-area" id="chat-box">
+            <!-- Welcome Message -->
+            <div class="message bot">
+                <div class="avatar">
+                    <i class="fa-solid fa-robot"></i>
+                </div>
+                <div class="bubble">
+                    <p>Hello! I'm your PetCare Assistant. I can help you with pet health, nutrition, and training tips. What would you like to know today?</p>
+                </div>
+            </div>
+        </main>
+        
+        <div class="typing-indicator" id="typing-indicator">
+            <div class="dot"></div>
+            <div class="dot"></div>
+            <div class="dot"></div>
+        </div>
+
+        <div class="input-area">
+            <form class="input-container" id="chat-form">
+                <input type="text" id="user-input" placeholder="Ask a question about your pet..." autocomplete="off">
+                <button type="submit" id="send-btn" disabled>
+                    <i class="fa-solid fa-paper-plane"></i>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <script src="/static/script.js"></script>
+</body>
+</html>

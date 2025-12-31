@@ -1,70 +1,45 @@
 import os
-from dotenv import load_dotenv
-import requests
 from langchain_community.document_loaders import WebBaseLoader
-from langchain.text_splitter import RecursiveCharacterTextSplitter
+from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_google_genai import GoogleGenerativeAIEmbeddings
-from langchain_community.vectorstores import Chroma
-from langchain_community.tools.tavily_search import TavilySearchResults
+from langchain_google_genai import GoogleGenerativeAIEmbeddings
+from langchain_community.vectorstores import FAISS
+from langchain_tavily import TavilySearchResults
 
-# Load environment variables from .env file
-load_dotenv()
+from src.core import config
 
-# Directory for storing the vector database
-PERSIST_DIRECTORY = "data/chroma_db"
-
-# Debug: Print loaded Tavily API key
-api_key_debug = os.getenv("TAVILY_API_KEY")
-print("Loaded Tavily API key:", repr(api_key_debug))
-
-def get_broad_pet_life_urls(num_results_per_query=5):
+def get_broad_pet_life_urls(num_results_per_query=1):
     """
     Fetch URLs covering the most essential aspects of pet ownership using Tavily via LangChain tool.
     Only include URLs from trusted domains.
     """
     queries = [
         "pet care basics",
-        "pet adoption tips",
-        "pet training techniques",
-        "pet health care",
-        "pet nutrition advice",
-        "pet grooming tips",
-        "pet safety tips",
-        "pet first aid",
-        "pet behavior",
-        "pet supplies",
-        "pet vaccination schedule",
-        "pet dental care",
-        "pet exercise routines",
-        "pet mental stimulation",
-        "pet travel tips",
-        "pet insurance",
-        "pet emergency preparedness",
-        "pet socialization",
-        "pet senior care",
-        "pet toxic foods",
-        "pet parasite prevention",
-        "pet adoption process",
-        "pet crate training",
-        "pet separation anxiety",
-        "pet allergies",
-        "pet cleaning tips"
+        # "pet adoption tips",
+        # "pet training techniques",
+        # "pet health care",
+        # "pet nutrition advice",
+        "pet food types"
     ]
     allowed_domains = [
         "akc.org", "aspca.org", "humanesociety.org", "petmd.com", "petfinder.com",
         ".edu", ".gov"
     ]
-    tavily_tool = TavilySearchResults()
+    tavily_tool = TavilySearchResults(k=num_results_per_query)
     urls = set()
     for query in queries:
-        results = tavily_tool.run({"query": query, "max_results": num_results_per_query})
-        # TavilySearchResults returns a list of dicts with 'url' keys
-        for item in results:
-            url = item.get('url')
-            if url and any(domain in url for domain in allowed_domains):
-                urls.add(url)
-            if len(urls) >= num_results_per_query * len(queries):
-                break
+        try:
+            results = tavily_tool.invoke({"query": query})
+            # TavilySearchResults returns a list of dicts with 'url' keys
+            for item in results:
+                url = item.get('url')
+                if url and any(domain in url for domain in allowed_domains):
+                    urls.add(url)
+                if len(urls) >= num_results_per_query * len(queries):
+                    break
+        except Exception as e:
+            print(f"Error fetching URLs for query '{query}': {e}")
+            
     return list(urls)
 
 def main():
@@ -75,7 +50,7 @@ def main():
 
     # 1. Discover Broad Pet Life URLs
     print("Fetching broad pet life URLs using Tavily API...")
-    urls = get_broad_pet_life_urls(num_results_per_query=5)
+    urls = get_broad_pet_life_urls(num_results_per_query=1)
     print(f"Found {len(urls)} unique URLs.")
 
     all_docs = []
@@ -95,20 +70,30 @@ def main():
 
     # 2. Split Documents
     print("Splitting documents into chunks...")
-    text_splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=150)
+    text_splitter = RecursiveCharacterTextSplitter(
+        chunk_size=config.INGEST_CHUNK_SIZE, 
+        chunk_overlap=config.INGEST_CHUNK_OVERLAP
+    )
     splits = text_splitter.split_documents(all_docs)
     print(f"Split into {len(splits)} chunks.")
 
-    # 3. Create Embeddings and Store in ChromaDB
-    print(f"Creating vector store at {PERSIST_DIRECTORY}...")
-    embeddings = GoogleGenerativeAIEmbeddings(model="models/embedding-001")
-    vectorstore = Chroma.from_documents(
-        documents=splits,
-        embedding=embeddings,
-        persist_directory=PERSIST_DIRECTORY
-    )
-    print("--- Data Ingestion Complete ---")
-    print(f"Total vectors in store: {vectorstore._collection.count()}")
+    # 3. Create Embeddings and Store in FAISS
+    print(f"Creating vector store at {config.FAISS_INDEX_PATH}...")
+    try:
+        embeddings = GoogleGenerativeAIEmbeddings(
+            model=config.EMBEDDING_MODEL,
+            google_api_key=config.GOOGLE_API_KEY
+        )
+        vectorstore = FAISS.from_documents(
+            documents=splits,
+            embedding=embeddings
+        )
+        vectorstore.save_local(str(config.FAISS_INDEX_PATH))
+        print("--- Data Ingestion Complete ---")
+        print(f"Total vectors in store: {vectorstore.index.ntotal}")
+    except Exception as e:
+        print(f"FAILED to ingest due to embedding error: {e}")
 
 if __name__ == "__main__":
     main()
+

@@ -1,0 +1,16 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+.env
+
+# Data
+data/faiss_index/
+data/chroma_db/
+
+# Logs
+*.log

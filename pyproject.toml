@@ -1,0 +1,30 @@
+[project]
+name = "pet-care-assistant"
+version = "1.0.0"
+description = "RAG-based Pet Care Assistant using LangChain and LangGraph"
+readme = "README.md"
+requires-python = ">=3.9"
+authors = [
+    { name = "Pet Care Team" }
+]
+keywords = ["langchain", "langgraph", "rag", "pet-care", "chatbot"]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0.0",
+    "pytest-asyncio>=0.24.0",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+asyncio_mode = "auto"
+python_files = ["test_*.py"]
+python_functions = ["test_*"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py39"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "W"]
+ignore = ["E501"]
